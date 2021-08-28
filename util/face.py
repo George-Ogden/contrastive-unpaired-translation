@@ -10,16 +10,20 @@ from models.experimental import attempt_load
 from utils.general import non_max_suppression, scale_coords
 from utils.torch_utils import select_device
 
-device = select_device("0")
-model = attempt_load("checkpoints/face/yolo.pt", map_location=device)
-stride = int(model.stride.max())
-model.half()
-model(torch.zeros(1, 3, 512, 512).to(device).type_as(next(model.parameters())))
+model = None
+device = None
+def init(gpu):
+    global model, device
+    device = select_device(str(gpu))
+    model = attempt_load("checkpoints/face/yolo.pt", map_location=device)
+    model.half()
+    model(torch.zeros(1, 3, 512, 512).to(device).type_as(next(model.parameters())))
 
 def xywh(im0):
     """
     returns x,y,w,h
     """
+    stride = int(model.stride.max())
     img = letterbox(im0, 512,stride=stride)[0]
     img = img[:, :, ::-1].transpose(2, 0, 1)
     img = np.ascontiguousarray(img)
