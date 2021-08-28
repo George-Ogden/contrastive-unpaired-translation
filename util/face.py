@@ -36,10 +36,16 @@ def xywh(im0):
             x1, y1, x2, y2 = xyxy
             yield int((x1+x2)/2), int((y1+y2)/2), int(x2-x1), int(y2-y1)
 
-def resize(image,shape=(256,256)):
+def crop(image,opt):
+    x = int(opt.load_size / 2 - opt.crop_size / 2)
+    h = opt.crop_size
+    return image[x:x+h,x:x+h]
+
+def resize(image,opt):
+    shape = [opt.load_size] * 2
     width = 86
     height = 119
     for x,y,w,h in xywh(image):
         ratio = np.sqrt(float(width*height)/float(w*h))
-        yield cv2.warpAffine(image,np.float32([[ratio,0,int(shape[0]/2-ratio*x)],[0,ratio,int(shape[1]/2-ratio*y)]]),(shape[0],shape[1]))
+        yield crop(cv2.warpAffine(image,np.float32([[ratio,0,int(shape[0]/2-ratio*x)],[0,ratio,int(shape[1]/2-ratio*y)]]),(shape[0],shape[1])),opt)
         

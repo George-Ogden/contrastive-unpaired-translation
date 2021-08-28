@@ -6,6 +6,7 @@ from util.util import tensor2im
 from util.face import resize
 import numpy as np
 import torch
+import cv2
 
 from PIL import Image
 
@@ -15,15 +16,26 @@ model = create_model(opt)
 model.setup(opt)
 model.parallelize()
 model.eval()
-if __name__ == '__main__':
-    transform = get_transform(opt)
-    x = Image.open("test.jpg")
-    y = resize(np.array(x))
-    x = [transform(Image.fromarray(x)) for x in y]
-    x = torch.stack(x)
+transform = get_transform(opt)
+
+def generate(image):
+    original = Image.open(image)
+    faces = list(resize(np.array(original),opt))
+    x = torch.stack([transform(Image.fromarray(face)) for face in faces])
     model.real_A = x
     model.forward()
-    for i, image in enumerate(model.fake):
-        y = tensor2im(image.unsqueeze(0))
-        y = Image.fromarray(y)
-        y.save(f"output-{i:02}.png")
+    output = np.concatenate([tensor2im(image.unsqueeze(0)) for image in model.fake])
+    faces = np.concatenate([face for face in faces])
+    image = np.concatenate((faces,output),axis=1)
+    original = np.array(original)
+    if original.shape[0] > image.shape[0]:
+        x = int(original.shape[0] / 2 - image.shape[0] / 2)
+        image = cv2.copyMakeBorder(image,x,original.shape[0] - image.shape[0] - x,0,0,cv2.BORDER_CONSTANT)
+    else:
+        original = cv2.resize(original,(int(original.shape[1] * image.shape[0] / original.shape[0]),image.shape[0]))
+    image = np.concatenate((original,image),axis=1)
+    return cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
+
+if __name__ == "__main__":
+    result = generate("test.jpg")
+    cv2.imwrite("output.png",result)
