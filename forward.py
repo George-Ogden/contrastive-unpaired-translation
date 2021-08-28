@@ -3,6 +3,9 @@ from data.base_dataset import get_transform
 from models import create_model
 from util.visualizer import save_images
 from util.util import tensor2im
+from util.face import resize
+import numpy as np
+import torch
 
 from PIL import Image
 
@@ -14,10 +17,13 @@ model.parallelize()
 model.eval()
 if __name__ == '__main__':
     transform = get_transform(opt)
-    x = Image.open("test.png")
-    x = transform(x).unsqueeze(0)
+    x = Image.open("test.jpg")
+    y = resize(np.array(x))
+    x = [transform(Image.fromarray(x)) for x in y]
+    x = torch.stack(x)
     model.real_A = x
     model.forward()
-    y = tensor2im(model.fake)
-    y = Image.fromarray(y)
-    y.save("output.png")
+    for i, image in enumerate(model.fake):
+        y = tensor2im(image.unsqueeze(0))
+        y = Image.fromarray(y)
+        y.save(f"output-{i:02}.png")
