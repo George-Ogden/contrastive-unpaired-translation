@@ -6,7 +6,7 @@ This is an example of what the model can do:
 ## Setup
 ### pip
 Tested on Python 3.6
-`pip install -r requirements.txt`
+```pip install -r requirements.txt```
 ### conda
 `conda env create -f environment.yml`
 ## Usage
