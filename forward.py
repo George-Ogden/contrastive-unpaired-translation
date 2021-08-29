@@ -18,6 +18,7 @@ parser = ArgumentParser(description="Painter")
 
 parser.add_argument("--verbose",action="store_true",help="print extra messages")
 parser.add_argument("--gpu-ids","--gpus",nargs="+",default=[0],type=int,help="GPUs to run on")
+parser.add_argument("--min-face-size","--size",default=50,type=int,help="minimum width of detected face (px)")
 subparsers = parser.add_subparsers()
 
 image = subparsers.add_parser("image")
@@ -46,6 +47,9 @@ def generate(image,opt):
     if opt.verbose:
         print("Extracting faces")
     faces = list(resize(np.array(original),opt))
+    if len(faces) == 0:
+        print("No faces detected")
+        return cv2.cvtColor(np.array(original),cv2.COLOR_BGR2RGB)
     x = torch.stack([transform(Image.fromarray(face)) for face in faces])
     model.real_A = x
     if opt.verbose:
@@ -68,7 +72,7 @@ def generate(image,opt):
 if __name__ == "__main__":
     if args.action == "image":
         result = generate(args.input_image,args)
-        create_folder(result)
+        create_folder(args.save_path)
         cv2.imwrite(args.save_path,result)
     elif args.action == "folder":
         folder = args.input_folder

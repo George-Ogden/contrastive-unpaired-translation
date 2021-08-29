@@ -50,6 +50,8 @@ def resize(image,opt):
     width = 86
     height = 119
     for x,y,w,h in xywh(image):
+        if w < opt.min_face_size:
+            continue
         ratio = np.sqrt(float(width*height)/float(w*h))
         yield crop(cv2.warpAffine(image,np.float32([[ratio,0,int(shape[0]/2-ratio*x)],[0,ratio,int(shape[1]/2-ratio*y)]]),(shape[0],shape[1])),opt)
         
