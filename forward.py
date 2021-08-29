@@ -14,22 +14,22 @@ import os
 
 from argparse import ArgumentParser
 
-parser = ArgumentParser(description="Painter")
+parser = ArgumentParser(description="Face Extractor and Portrait Generator")
 
-parser.add_argument("--verbose",action="store_true",help="print extra messages")
+parser.add_argument("--verbose","-v",action="store_true",help="print extra messages")
 parser.add_argument("--gpu-ids","--gpus",nargs="+",default=[0],type=int,help="GPUs to run on")
-parser.add_argument("--min-face-size","--size",default=50,type=int,help="minimum width of detected face (px)")
+parser.add_argument("--min-face-size","-s",default=50,type=int,help="minimum width of detected face (px)")
 subparsers = parser.add_subparsers()
 
 image = subparsers.add_parser("image")
-image.add_argument("--save-path",default="output.png",help="output save location")
-image.add_argument("--input-image",default="example.png",required=True,help="input image location")
+image.add_argument("--input-image","--input","-i",default="example.png",required=True,help="input image location")
+image.add_argument("--save-path","--output","-o",default="output.png",help="output save location")
 image.set_defaults(action="image")
 
 folder = subparsers.add_parser("folder")
-folder.add_argument("--output-folder",default="output/",help="output save location")
-folder.add_argument("--input-folder",default=".",required=True,help="input image location")
-folder.add_argument("--extensions",nargs="+",default=["png", "jpeg", "jpg", "bmp", "tiff", "tif"],help="image file extensions")
+folder.add_argument("--input-folder","--input","-i",default=".",required=True,help="input image location")
+folder.add_argument("--output-folder","--output","-o",default="output/",help="output save location")
+folder.add_argument("--extensions","-e",nargs="+",default=["png", "jpeg", "jpg", "bmp", "tiff", "tif"],help="image file extensions")
 folder.set_defaults(action="folder")
 parser.set_defaults(CUT_mode='CUT', checkpoints_dir='./checkpoints', crop_size=200, direction='AtoB', epoch='latest', flip_equivariance=False, init_gain=0.02, init_type='xavier', input_nc=3, isTrain=False, load_size=256, model='cut', name='painter', nce_idt=True, nce_layers='0,4,8,12,16', netF='mlp_sample', netF_nc=256, netG='resnet_9blocks', ngf=64, no_antialias=False, no_antialias_up=False, no_dropout=True, no_flip=True, normG='instance', output_nc=3, preprocess=[])
 
