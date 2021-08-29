@@ -5,8 +5,8 @@ This is an example of what the model can do:
 ![Example Image](example.png "Example Image")
 ## Setup
 ### pip
-Tested on Python 3.6
-```pip install -r requirements.txt```
+Tested on Python 3.6<br>
+`pip install -r requirements.txt`
 ### conda
 `conda env create -f environment.yml`
 ## Usage
