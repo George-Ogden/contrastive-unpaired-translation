@@ -5,7 +5,7 @@ node_modules/
 .DS_Store
 debug*
 datasets/
-checkpoints/
+test_opt.txt
 results/
 build/
 dist/
