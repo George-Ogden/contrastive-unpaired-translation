@@ -51,7 +51,7 @@ transform = get_transform(args)
 def generate(image,opt):
     print(image)
     # open image
-    original = Image.open(image)
+    original = Image.open(image).convert("RGB")
     if opt.verbose:
         print("Extracting faces")
     # extract faces
